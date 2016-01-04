@@ -1,0 +1,45 @@
+#!/bin/python
+
+import sys
+import os
+
+from pprint import pprint as pp
+from destiny.client import DestinyClient
+
+destiny_client = DestinyClient()
+
+def activity_summary(m_id, c_id):
+    activities = destiny_client.ActivityHistory(
+        DestinyClient.PLATFORM['PSN'],
+        m_id,
+        c_id, 5, 0, 10)['data']['activities']
+    for activity in activities:
+        period = activity['period']
+        mode = activity['activityDetails']['mode']
+        a_id = activity['activityDetails']['instanceId']
+        print(c_id, period, a_id, mode)
+
+
+
+def main():
+
+
+    m_id = int(destiny_client.GetMembershipIdByDisplayName(
+        DestinyClient.PLATFORM['PSN'],
+        sys.argv[1]
+    ))
+
+    c_ids = [
+      int(c['characterBase']['characterId']) for c in
+          destiny_client.GetAccount(
+          DestinyClient.PLATFORM['PSN'], m_id
+          )['data']['characters']
+    ]
+
+    for c_id in c_ids:
+        activity_summary(m_id, c_id)
+
+    return os.EX_OK
+
+if __name__ == "__main__":
+    sys.exit(main())

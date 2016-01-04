@@ -1,0 +1,18 @@
+#!/bin/python
+
+import sys
+import os
+
+from pprint import pprint as pp
+from destiny.client import DestinyClient
+
+
+def main():
+    data = DestinyClient().PostGameCarnageReport(sys.argv[1])
+    pp(data.keys())
+    for entry in data['Response']['data']['entries']:
+        pp(entry['player']['destinyUserInfo'])
+    return os.EX_OK
+
+if __name__ == "__main__":
+    sys.exit(main())
